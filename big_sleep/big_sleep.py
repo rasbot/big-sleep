@@ -23,6 +23,8 @@ from big_sleep.resample import resample
 from big_sleep.biggan import BigGAN
 from big_sleep.clip import load, tokenize
 
+from pytorchtools import EarlyStopping
+
 assert torch.cuda.is_available(), 'CUDA must be available in order to use Big Sleep'
 
 # graceful keyboard interrupt
@@ -484,6 +486,8 @@ class Imagine(nn.Module):
             penalizing = f'penalizing "{self.text_min}"'
         print(f'Imagining "{self.text_path}" {penalizing}...')
         
+        early_stopping = EarlyStopping(patience=3, verbose=True)
+
         with torch.no_grad():
             self.model(self.encoded_texts["max"][0]) # one warmup step due to issue with CLIP and CUDA
 
